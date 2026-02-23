@@ -31,7 +31,7 @@ FPS_out = 30                    #Video frame rate
 # --- GStreamer Pipeline (with hardware encoding)
 gst_out = (
     f"appsrc ! "
-    f"video/x-raw,format=BGR,width={WIDTH_in},height={HEIGHT_in},framerate={FPS_in}/1 ! "
+    
     f"videoconvert ! video/x-raw,format=I420 ! "
     f"x264enc tune=zerolatency ! "
     f"rtph264pay config-interval=1 pt=96 ! "

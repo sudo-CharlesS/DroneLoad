@@ -42,7 +42,7 @@ gst_out = (
 """
 gst_out = (
     f"appsrc ! "
-    f"video/x-raw,format=BGR,width={WIDTH_in},height={HEIGHT_in},framerate={FPS_in}/1 ! "
+    f"video/x-raw,format=BGR,width=1920,height=1080,framerate=30/1 ! "
     f"videoconvert ! "
     f"video/x-raw,format=I420 ! "
     f"v4l2h264enc extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=8000000\" ! "

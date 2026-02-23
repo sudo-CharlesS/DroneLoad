@@ -29,6 +29,7 @@ WIDTH_out, HEIGHT_out = 1280, 720    #Video resolution
 FPS_out = 30                    #Video frame rate
 
 # --- GStreamer Pipeline (with hardware encoding)
+"""
 gst_out = (
     f"appsrc ! "
     f"video/x-raw,format=BGR ! "
@@ -38,7 +39,18 @@ gst_out = (
     f"rtph264pay config-interval=1 pt=96 ! "
     f"udpsink host={IP_DEST} port=5000 sync=false"
 )
-
+"""
+gst_out = (
+    "appsrc ! "
+    "video/x-raw,format=BGR ! "
+    "videoconvert ! "
+    "video/x-raw,format=I420 ! "
+    "v4l2h264enc extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=4000000\" ! "
+    "video/x-h264,level=(string)4 ! " # On force le caps-filter qui marche dans ton terminal
+    "h264parse ! "                    # Indispensable pour stabiliser le flux matériel
+    "rtph264pay config-interval=1 pt=96 ! "
+    "udpsink host={} port=5000 sync=false"
+).format(IP_DEST)
 
 
 # Création des objets VideoCapture et VideoWriter

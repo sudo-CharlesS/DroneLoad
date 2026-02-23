@@ -42,7 +42,7 @@ gst_out = (
 """
 gst_out = (
     f"appsrc ! "
-    f"video/x-raw,format=BGR ! "
+    f"video/x-raw,format=BGR,width={WIDTH_in},height={HEIGHT_in},framerate={FPS_in}/1 ! "
     f"videoconvert ! "
     f"video/x-raw,format=I420 ! "
     f"v4l2h264enc extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=8000000\" ! "
@@ -57,7 +57,7 @@ gst_out = (
 cap = cv2.VideoCapture(gst_in, cv2.CAP_GSTREAMER)
 out = None
 if STREAMING_ACTIVE:
-    out = cv2.VideoWriter(gst_out, cv2.CAP_GSTREAMER, 0, FPS_out, (WIDTH_out, HEIGHT_out))
+    out = cv2.VideoWriter(gst_out, cv2.CAP_GSTREAMER, 0, FPS_in, (WIDTH_in, HEIGHT_in))
 
 if not cap.isOpened() or (STREAMING_ACTIVE and not out.isOpened()):
     print("Erreur : Impossible d'ouvrir les pipelines GStreamer")

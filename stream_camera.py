@@ -35,7 +35,7 @@ gst_out = (
     f"video/x-raw,format=BGR ! "
     f"queue ! "
     f"videoconvert ! video/x-raw,format=I420 ! "
-    f"v4l2h264enc extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=8000000\" ! "
+    f"v4l2h264enc  extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=8000000\" ! "
     f"rtph264pay config-interval=1 pt=96 ! "
     f"udpsink host={IP_DEST} port=5000 sync=false"
 )
@@ -45,19 +45,21 @@ gst_out = (
     f"video/x-raw,format=BGR,width={WIDTH_in},height={HEIGHT_in},framerate={FPS_in}/1 ! "
     f"videoconvert ! "
     f"video/x-raw,format=I420 ! "
-    f"v4l2h264enc extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=8000000\" ! "
-    f"video/x-h264,level=(string)4 ! " # On force le caps-filter qui marche dans ton terminal
+    f"v4l2h264enc tune=zerolatency extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=8000000\" ! "
+    f"video/x-h264,profile=high,stream-format=byte-stream ! " # On force le caps-filter qui marche dans ton terminal
     f"h264parse ! "                    # Indispensable pour stabiliser le flux matériel
-    f"rtph264pay config-interval=1 pt=96 ! "
-    f"udpsink host={IP_DEST} port=5000 sync=false"
+    f"rtph264pay config-interval=1 pt=96 aggregate-mode=none ! "
+    f"udpsink host={IP_DEST} port=5000 sync=false async=false"
 )
+
+#level=(string)4
 
 
 # Création des objets VideoCapture et VideoWriter
 cap = cv2.VideoCapture(gst_in, cv2.CAP_GSTREAMER)
 out = None
 if STREAMING_ACTIVE:
-    out = cv2.VideoWriter(gst_out, cv2.CAP_GSTREAMER, 0, FPS_in, (WIDTH_in, HEIGHT_in))
+    out = cv2.VideoWriter(gst_out, cv2.CAP_GSTREAMER, 0, FPS_in, (WIDTH_in, HEIGHT_in), True)
 
 if not cap.isOpened() or (STREAMING_ACTIVE and not out.isOpened()):
     print("Erreur : Impossible d'ouvrir les pipelines GStreamer")

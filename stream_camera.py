@@ -13,18 +13,26 @@ cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
 
 def generate_frames():
-    start_time = time.monotonic_ns()
-    frame_count = 0
+    prev_time = time.time()
+    fps_count = 0
     while True:
             success, frame = cap.read()
             if not success:
                     break
             else:
-                cv2.putText(frame, f"Pi4 - Detection Active - Frame {frame_count}",
+                cv2.putText(frame, f"Pi4 - Detection Active - Frame {fps_count}",
                             (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-                frame_count += 1
+
+
                 ret, buffer = cv2.imencode('.jpg', frame)
                 yield (b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
+
+                fps_count += 1
+                current_time = time.time()
+                if current_time - prev_time >= 1.0:
+                    print(f"FPS Réels : {fps_count}")
+                    fps_count = 0
+                    prev_time = current_time
 
 @app.route('/')
 def index():

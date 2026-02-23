@@ -5,15 +5,15 @@ import time
 # 1. Pipeline d'ENTRÉE (Capture 1080p -> Sortie 720p via ISP)
 # Si vous utilisez une caméra USB, remplacez libcamerasrc par v4l2src
 gst_in = (
-    "v4l2src ! "
-    "video/x-raw,width=1280,height=720,framerate=30/1 ! "
+    "v4l2src ! device=/dev/video0"
+    #"video/x-raw,width=1280,height=720,framerate=30/1 ! "
     "videoconvert ! video/x-raw,format=BGR ! appsink"
 )
 
 # 2. Pipeline de SORTIE (Streaming réseau UDP)
 # Remplacez l'IP par celle de votre PC récepteur
 STREAMING_ACTIVE = True
-IP_DEST = input("PC IP (0 to desactivate streaming : ")#"192.168.2.9"    #Destination PC IP
+IP_DEST = input("PC IP (0 to deactivate streaming : ")#"192.168.2.9"    #Destination PC IP
 if IP_DEST == "0":
     IP_DEST = "0.0.0.0"
     STREAMING_ACTIVE = False

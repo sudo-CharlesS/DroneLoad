@@ -15,12 +15,13 @@ cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 def generate_frames():
     prev_time = time.time()
     fps_count = 0
+    fps=0
     while True:
             success, frame = cap.read()
             if not success:
                     break
             else:
-                cv2.putText(frame, f"Pi4 - Detection Active - Frame {fps_count}",
+                cv2.putText(frame, f"Pi4 - Detection Active - Frame {fps}",
                             (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
 
@@ -31,6 +32,7 @@ def generate_frames():
                 current_time = time.time()
                 if current_time - prev_time >= 1.0:
                     print(f"FPS Réels : {fps_count}")
+                    fps=fps_count
                     fps_count = 0
                     prev_time = current_time
 

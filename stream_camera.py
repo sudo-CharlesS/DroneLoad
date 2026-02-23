@@ -46,13 +46,13 @@ gst_out = (
     f"videoconvert ! "
     f"video/x-raw,format=I420 ! "
     f"v4l2h264enc extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=4000000,h264_i_frame_period=15\" ! "
-    f"video/x-h264,profile=high,stream-format=byte-stream ! " # On force le caps-filter qui marche dans ton terminal
+    f"video/x-h264,level=(string)4,profile=high,stream-format=byte-stream ! " # On force le caps-filter qui marche dans ton terminal
     f"h264parse ! "                    # Indispensable pour stabiliser le flux matériel
     f"rtph264pay config-interval=1 pt=96 aggregate-mode=none ! "
     f"udpsink host={IP_DEST} port=5000 sync=false async=false"
 )
 
-#level=(string)4
+#
 
 
 # Création des objets VideoCapture et VideoWriter

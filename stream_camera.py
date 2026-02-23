@@ -29,7 +29,7 @@ WIDTH_in, HEIGHT_in = 1920, 1080    #Video resolution
 FPS_in = 30                    #Video frame rate
 
 WIDTH_out, HEIGHT_out = 1280, 720    #Video resolution
-FPS_out = 15                    #Video frame rate
+FPS_out = 30                    #Video frame rate
 
 # --- GStreamer Pipeline (with hardware encoding)
 gst_out = (
@@ -51,7 +51,7 @@ gst_out = (
 #cap = cv2.VideoCapture(gst_in, cv2.CAP_GSTREAMER)
 
 cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
-cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
+#cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 cap.set(cv2.CAP_PROP_FPS, 30)

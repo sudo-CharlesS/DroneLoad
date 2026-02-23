@@ -16,10 +16,13 @@ gst_in = (
 # 2. Pipeline de SORTIE (Streaming réseau UDP)
 # Remplacez l'IP par celle de votre PC récepteur
 STREAMING_ACTIVE = True
-IP_DEST = input("PC IP (0 to deactivate streaming : ")#"192.168.2.9"    #Destination PC IP
+IP_DEST = input("IP (1 for default=192.169.2.9 / 0 to deactivate streaming ) : ")#"192.168.2.9"    #Destination PC IP
 if IP_DEST == "0":
     IP_DEST = "0.0.0.0"
     STREAMING_ACTIVE = False
+elif IP_DEST == "1":
+    IP_DEST = "192.168.2.9"
+
 PORT = 5000
 
 WIDTH_in, HEIGHT_in = 1920, 1080    #Video resolution
@@ -29,17 +32,6 @@ WIDTH_out, HEIGHT_out = 1280, 720    #Video resolution
 FPS_out = 30                    #Video frame rate
 
 # --- GStreamer Pipeline (with hardware encoding)
-"""
-gst_out = (
-    f"appsrc ! "
-    f"video/x-raw,format=BGR ! "
-    f"queue ! "
-    f"videoconvert ! video/x-raw,format=I420 ! "
-    f"v4l2h264enc  extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=8000000\" ! "
-    f"rtph264pay config-interval=1 pt=96 ! "
-    f"udpsink host={IP_DEST} port=5000 sync=false"
-)
-"""
 gst_out = (
     f"appsrc ! "
     f"video/x-raw,format=BGR,width={WIDTH_in},height={HEIGHT_in},framerate={FPS_in}/1 ! "
@@ -56,7 +48,14 @@ gst_out = (
 
 
 # Création des objets VideoCapture et VideoWriter
-cap = cv2.VideoCapture(gst_in, cv2.CAP_GSTREAMER)
+#cap = cv2.VideoCapture(gst_in, cv2.CAP_GSTREAMER)
+
+cap = cv2.VideoCapture(0)
+cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+cap.set(cv2.CAP_PROP_FPS, 30)
+
 cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 out = None
 if STREAMING_ACTIVE:

@@ -43,7 +43,7 @@ def generate_frames():
                     if current_time - prev_time >= 1.0:
                         print(f"FPS Réels : {frame_count}")
                         fps=frame_count
-                        fps_count = 0
+                        frame_count = 0
                         prev_time = current_time
 
     except KeyboardInterrupt:

@@ -33,8 +33,8 @@ gst_out = (
     f"appsrc ! "
     f"videoconvert ! video/x-raw,format=I420 ! "
     f"x264enc tune=zerolatency ! "
-    f"rtph264pay ! "
-    f"udpsink host={IP_DEST} port=5000"
+    f"rtph264pay ! config-interval=1 pt=96 ! "
+    f"udpsink host={IP_DEST} port=5000 sync=false"
 
 )
 

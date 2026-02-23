@@ -32,7 +32,7 @@ FPS_out = 30                    #Video frame rate
 gst_out = (
     f"appsrc ! "
     f"videoconvert ! video/x-raw,format=I420 ! "
-    f"v4l2h264enc extra-controls=\"controls,h264_profile=4, h264_level=13, video_bitrate=4000000\" ! "
+    f"v4l2h264enc ! "
     f"rtph264pay config-interval=1 pt=96 ! "
     f"udpsink host={IP_DEST} port=5000 sync=false"
 

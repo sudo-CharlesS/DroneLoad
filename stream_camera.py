@@ -1,14 +1,6 @@
 import cv2
 import time
-import gi
 
-#####################
-gi.require_version('Gst', '1.0')
-gi.require_version('GstApp', '1.0')
-from gi.repository import Gst, GstApp
-
-# Initialisation GStreamer
-Gst.init(None)
 
 # 1. Pipeline d'ENTRÉE (Capture 1080p -> Sortie 720p via ISP)
 # Si vous utilisez une caméra USB, remplacez libcamerasrc par v4l2src
@@ -80,6 +72,7 @@ try:
 
 except KeyboardInterrupt:
     print("\nArrêt du programme...")
+    exit(1)
 
 finally:
     cap.release()

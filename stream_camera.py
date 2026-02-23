@@ -3,6 +3,11 @@ from flask import Flask, Response
 
 app = Flask(__name__)
 camera = cv2.VideoCapture('/dev/video0', cv2.CAP_V4L2)
+cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+cap.set(cv2.CAP_PROP_FPS, 30)
+
 
 def generate_frames():
         while True:

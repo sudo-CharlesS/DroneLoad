@@ -16,7 +16,7 @@ gst_in = (
 # 2. Pipeline de SORTIE (Streaming réseau UDP)
 # Remplacez l'IP par celle de votre PC récepteur
 STREAMING_ACTIVE = True
-IP_DEST = input("IP (1 for default=192.169.2.9 / 0 to deactivate streaming ) : ")#"192.168.2.9"    #Destination PC IP
+IP_DEST = input("Type IP (or 1 for default=192.169.2.9 or 0 to deactivate streaming ) : ")#"192.168.2.9"    #Destination PC IP
 if IP_DEST == "0":
     IP_DEST = "0.0.0.0"
     STREAMING_ACTIVE = False
@@ -25,16 +25,13 @@ elif IP_DEST == "1":
 
 PORT = 5000
 
-WIDTH_in, HEIGHT_in = 1920, 1080    #Video resolution
-FPS_in = 30                    #Video frame rate
-
-WIDTH_out, HEIGHT_out = 1280, 720    #Video resolution
-FPS_out = 30                    #Video frame rate
+WIDTH, HEIGHT = 1920, 1080    #Video resolution
+FPS = 30                    #Video frame rate
 
 # --- GStreamer Pipeline (with hardware encoding)
 gst_out = (
     f"appsrc ! "
-    f"video/x-raw,format=BGR,width={WIDTH_out},height={HEIGHT_out},framerate={FPS_out}/1 ! "
+    f"video/x-raw,format=BGR,width={WIDTH},height={HEIGHT},framerate={FPS}/1 ! "
     f"videoconvert ! "
     f"video/x-raw,format=I420 ! "
     f"v4l2h264enc extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=4000000,h264_i_frame_period=15\" ! "
@@ -48,18 +45,18 @@ gst_out = (
 
 
 # Création des objets VideoCapture et VideoWriter
-#cap = cv2.VideoCapture(gst_in, cv2.CAP_GSTREAMER)
-
+cap = cv2.VideoCapture(gst_in, cv2.CAP_GSTREAMER)
+"""
 cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
-#cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-cap.set(cv2.CAP_PROP_FPS, 30)
-
+cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
+cap.set(cv2.CAP_PROP_FPS, FPS)
+"""
 cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 out = None
 if STREAMING_ACTIVE:
-    out = cv2.VideoWriter(gst_out, cv2.CAP_GSTREAMER, 0, FPS_out, (WIDTH_out, HEIGHT_out), True)
+    out = cv2.VideoWriter(gst_out, cv2.CAP_GSTREAMER, 0, FPS, (WIDTH, HEIGHT), True)
 
 if not cap.isOpened() or (STREAMING_ACTIVE and not out.isOpened()):
     print("Erreur : Impossible d'ouvrir les pipelines GStreamer")

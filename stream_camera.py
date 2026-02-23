@@ -50,7 +50,7 @@ gst_out = (
 # Création des objets VideoCapture et VideoWriter
 #cap = cv2.VideoCapture(gst_in, cv2.CAP_GSTREAMER)
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
 cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
@@ -61,7 +61,7 @@ out = None
 if STREAMING_ACTIVE:
     out = cv2.VideoWriter(gst_out, cv2.CAP_GSTREAMER, 0, FPS_in, (WIDTH_in, HEIGHT_in), True)
 
-if (STREAMING_ACTIVE and not out.isOpened()):   #not cap.isOpened() or 
+if not cap.isOpened() or (STREAMING_ACTIVE and not out.isOpened()):
     print("Erreur : Impossible d'ouvrir les pipelines GStreamer")
     exit()
 

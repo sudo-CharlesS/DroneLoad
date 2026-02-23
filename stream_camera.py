@@ -35,17 +35,17 @@ gst_out = (
     f"video/x-raw,format=BGR ! "
     f"queue ! "
     f"videoconvert ! video/x-raw,format=I420 ! "
-    f"v4l2h264enc extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=4000000\" ! "
+    f"v4l2h264enc extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=8000000\" ! "
     f"rtph264pay config-interval=1 pt=96 ! "
     f"udpsink host={IP_DEST} port=5000 sync=false"
 )
 """
 gst_out = (
     "appsrc ! "
-    "video/x-raw,format=BGR ! "
+    "video/x-raw,format=BGR,width={WIDTH_in},height={HEIGHT_in},framerate={FPS_in}/1 ! "
     "videoconvert ! "
     "video/x-raw,format=I420 ! "
-    "v4l2h264enc extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=4000000\" ! "
+    "v4l2h264enc extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=8000000\" ! "
     "video/x-h264,level=(string)4 ! " # On force le caps-filter qui marche dans ton terminal
     "h264parse ! "                    # Indispensable pour stabiliser le flux matériel
     "rtph264pay config-interval=1 pt=96 ! "

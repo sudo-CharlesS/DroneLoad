@@ -30,13 +30,10 @@ FPS_out = 30                    #Video frame rate
 
 # --- GStreamer Pipeline (with hardware encoding)
 gst_out = (
-    "appsrc ! "
-    f"video/x-raw,format=BGR,width={WIDTH_in},height={HEIGHT_in},framerate={FPS_in}/1 ! "
-    f"videoconvert ! video/x-raw,format=I420 ! "
-    f"v4l2h264enc extra-controls=\"controls,h264_profile=4, h264_level=13, video_bitrate=4000000\" ! "
-    f"rtph264pay config-interval=1 pt=96 ! "
-    f"udpsink host={IP_DEST} port={PORT} sync=false"
+    f"appsrc ! videoconvert ! x264enc tune=zerolatency ! rtph264pay ! udpsink host={IP_DEST} port=5000"
+
 )
+
 
 # Création des objets VideoCapture et VideoWriter
 cap = cv2.VideoCapture(gst_in, cv2.CAP_GSTREAMER)

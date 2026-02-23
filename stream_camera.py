@@ -22,7 +22,7 @@ if IP_DEST == "0":
     STREAMING_ACTIVE = False
 PORT = 5000
 
-WIDTH_in, HEIGHT_in = 1280, 720    #Video resolution
+WIDTH_in, HEIGHT_in = 1920, 1080    #Video resolution
 FPS_in = 30                    #Video frame rate
 
 WIDTH_out, HEIGHT_out = 1280, 720    #Video resolution

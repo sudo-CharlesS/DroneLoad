@@ -29,7 +29,7 @@ WIDTH_in, HEIGHT_in = 1920, 1080    #Video resolution
 FPS_in = 30                    #Video frame rate
 
 WIDTH_out, HEIGHT_out = 1280, 720    #Video resolution
-FPS_out = 30                    #Video frame rate
+FPS_out = 15                    #Video frame rate
 
 # --- GStreamer Pipeline (with hardware encoding)
 gst_out = (

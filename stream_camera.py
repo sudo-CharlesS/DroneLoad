@@ -34,7 +34,7 @@ FPS_out = 30                    #Video frame rate
 # --- GStreamer Pipeline (with hardware encoding)
 gst_out = (
     f"appsrc ! "
-    f"video/x-raw,format=BGR,width={WIDTH_in},height={HEIGHT_in},framerate={FPS_in}/1 ! "
+    f"video/x-raw,format=BGR,width={WIDTH_out},height={HEIGHT_out},framerate={FPS_out}/1 ! "
     f"videoconvert ! "
     f"video/x-raw,format=I420 ! "
     f"v4l2h264enc extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=4000000,h264_i_frame_period=15\" ! "
@@ -52,8 +52,8 @@ gst_out = (
 
 cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
 cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 cap.set(cv2.CAP_PROP_FPS, 30)
 
 cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)

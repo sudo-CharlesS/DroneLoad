@@ -59,7 +59,7 @@ cap.set(cv2.CAP_PROP_FPS, 30)
 cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 out = None
 if STREAMING_ACTIVE:
-    out = cv2.VideoWriter(gst_out, cv2.CAP_GSTREAMER, 0, FPS_in, (WIDTH_in, HEIGHT_in), True)
+    out = cv2.VideoWriter(gst_out, cv2.CAP_GSTREAMER, 0, FPS_out, (WIDTH_out, HEIGHT_out), True)
 
 if not cap.isOpened() or (STREAMING_ACTIVE and not out.isOpened()):
     print("Erreur : Impossible d'ouvrir les pipelines GStreamer")

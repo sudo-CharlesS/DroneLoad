@@ -1,5 +1,6 @@
 import cv2
 import time
+import sys
 
 
 # 1. Pipeline d'ENTRÉE (Capture 1080p -> Sortie 720p via ISP)
@@ -74,9 +75,10 @@ try:
 
 except KeyboardInterrupt:
     print("\nArrêt du programme...")
-    exit(1)
+    sys.exit(1)
 
 finally:
     cap.release()
-    out.release()
+    if out is not None and out.isOpened():
+        out.release()
     print("Pipelines fermées proprement.")

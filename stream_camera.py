@@ -57,6 +57,7 @@ gst_out = (
 
 # Création des objets VideoCapture et VideoWriter
 cap = cv2.VideoCapture(gst_in, cv2.CAP_GSTREAMER)
+cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 out = None
 if STREAMING_ACTIVE:
     out = cv2.VideoWriter(gst_out, cv2.CAP_GSTREAMER, 0, FPS_in, (WIDTH_in, HEIGHT_in), True)

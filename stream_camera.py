@@ -41,7 +41,7 @@ out = None
 if STREAMING_ACTIVE:
     out = cv2.VideoWriter(gst_out, cv2.CAP_GSTREAMER, 0, FPS_out, (WIDTH_out, HEIGHT_out))
 
-if not cap.isOpened() or (not out.isOpened() and STREAMING_ACTIVE):
+if not cap.isOpened() or (STREAMING_ACTIVE and not out.isOpened()):
     print("Erreur : Impossible d'ouvrir les pipelines GStreamer")
     exit()
 

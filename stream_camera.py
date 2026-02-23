@@ -30,7 +30,7 @@ FPS_out = 30                    #Video frame rate
 
 # --- GStreamer Pipeline (with hardware encoding)
 gst_out = (
-    f"appsrc name=mysrc is-live=true format=GST_FORMAT_TIME ! "
+    "appsrc ! "
     f"video/x-raw,format=BGR,width={WIDTH_in},height={HEIGHT_in},framerate={FPS_in}/1 ! "
     f"videoconvert ! video/x-raw,format=I420 ! "
     f"v4l2h264enc extra-controls=\"controls,h264_profile=4, h264_level=13, video_bitrate=4000000\" ! "

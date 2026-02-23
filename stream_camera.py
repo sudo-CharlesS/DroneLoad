@@ -1,4 +1,4 @@
-import cv2
+import cv2, time
 from flask import Flask, Response
 
 app = Flask(__name__)
@@ -11,14 +11,20 @@ cap.set(cv2.CAP_PROP_FPS, 30)
 
 cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
+
 def generate_frames():
+    start_time = time.monotonic_ns()
+    frame_count = 0
         while True:
                 success, frame = cap.read()
                 if not success:
                         break
                 else:
-                        ret, buffer = cv2.imencode('.jpg', frame)
-                        yield (b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
+                    cv2.putText(frame, f"Pi4 - Detection Active - Frame {frame_count}",
+                                (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                    frame_count += 1
+                    ret, buffer = cv2.imencode('.jpg', frame)
+                    yield (b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
 
 @app.route('/')
 def index():

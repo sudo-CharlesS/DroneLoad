@@ -19,12 +19,12 @@ gst_in = (
     "v4l2src device=/dev/video0 ! "
     "image/jpeg,width=1920,height=1080,framerate=30/1 ! "
     "jpegdec ! "
-    "videoconvert ! video/x-raw,format=BGR ! appsink"
+    "v4l2convert ! video/x-raw,format=BGR ! appsink"
 )
 gst_out = (
     f"appsrc ! "
     f"video/x-raw,format=BGR,width={WIDTH},height={HEIGHT},framerate={FPS}/1 ! "
-    f"v4l2convert ! "
+    f"v4l2convert ! "   #videoconvert
     f"video/x-raw,format=I420 ! "
     f"v4l2h264enc extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=4000000,h264_i_frame_period=15\" ! "
     f"video/x-h264,level=(string)4,profile=high,stream-format=byte-stream ! " # On force le caps-filter qui marche dans ton terminal
@@ -33,13 +33,13 @@ gst_out = (
     f"udpsink host={IP_DEST} port=5000 sync=false async=false"
 )
 
-#cap = cv2.VideoCapture(gst_in, cv2.CAP_GSTREAMER)
-cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
-cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
-cap.set(cv2.CAP_PROP_FPS, FPS)
-cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+cap = cv2.VideoCapture(gst_in, cv2.CAP_GSTREAMER)
+#cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
+#cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
+#cap.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
+#cap.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
+#cap.set(cv2.CAP_PROP_FPS, FPS)
+#cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
 out = None
 if STREAMING_ACTIVE:

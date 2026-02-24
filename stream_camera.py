@@ -6,6 +6,14 @@ PORT = 5000
 WIDTH, HEIGHT = 1920, 1080    #Video resolution
 FPS = 30
 
+STREAMING_ACTIVE = True
+IP_DEST = input("Type IP (or 1 for default=192.169.2.9 or 0 to deactivate streaming ) : ")#"192.168.2.9"    #Destination PC IP
+if IP_DEST == "0":
+    IP_DEST = "0.0.0.0"
+    STREAMING_ACTIVE = False
+elif IP_DEST == "1":
+    IP_DEST = "192.168.2.9"
+
 # Si vous utilisez une caméra USB, remplacez libcamerasrc par v4l2src
 gst_in = (
     "v4l2src device=/dev/video0 ! "
@@ -32,15 +40,6 @@ cap.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
 cap.set(cv2.CAP_PROP_FPS, FPS)
 cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
-
-
-STREAMING_ACTIVE = True
-IP_DEST = input("Type IP (or 1 for default=192.169.2.9 or 0 to deactivate streaming ) : ")#"192.168.2.9"    #Destination PC IP
-if IP_DEST == "0":
-    IP_DEST = "0.0.0.0"
-    STREAMING_ACTIVE = False
-elif IP_DEST == "1":
-    IP_DEST = "192.168.2.9"
 
 out = None
 if STREAMING_ACTIVE:

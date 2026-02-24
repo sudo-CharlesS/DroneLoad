@@ -24,7 +24,7 @@ gst_in = (
 gst_out = (
     f"appsrc ! "
     f"video/x-raw,format=BGR,width={WIDTH},height={HEIGHT},framerate={FPS}/1 ! "
-    f"v4l2convert ! "
+    f"videoconvert ! "
     f"video/x-raw,format=I420 ! "
     f"v4l2h264enc extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=4000000,h264_i_frame_period=15\" ! "
     f"video/x-h264,level=(string)4,profile=high,stream-format=byte-stream ! " # On force le caps-filter qui marche dans ton terminal

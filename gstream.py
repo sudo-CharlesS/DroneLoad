@@ -40,7 +40,7 @@ class VideoGStreamer:
         if self.streaming_active:
             gst_out = (
                 f"appsrc ! "
-                f"video/x-raw,format=BGR,width={self.width},height={self.height},framerate={self.fps}/1 ! "  # format=GRAY8 #niveaux de gris (réduire le bitrate)
+                f"video/x-raw,format=GRAY8,width={self.width},height={self.height},framerate={self.fps}/1 ! "  # format=GRAY8 #niveaux de gris (réduire le bitrate)
                 f"videoconvert ! "  #v4l2convert encodeur matériel (moins cpu mais moins fps)
                 f"video/x-raw,format=I420 ! "
                 f"v4l2h264enc extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=4000000,h264_i_frame_period=15\" ! "
@@ -49,7 +49,7 @@ class VideoGStreamer:
                 f"rtph264pay config-interval=1 pt=96 aggregate-mode=none ! "
                 f"udpsink host={self.ip_dest} port={self.port} sync=false async=false"
             )
-            self.out = cv2.VideoWriter(gst_out, cv2.CAP_GSTREAMER, 0, self.fps, (self.width, self.height), True) #False : niveaux de gris
+            self.out = cv2.VideoWriter(gst_out, cv2.CAP_GSTREAMER, 0, self.fps, (self.width, self.height), False) #False : niveaux de gris
 
             if not self.out.isOpened():
                 print("Erreur : Impossible d'ouvrir le pipeline de sortie")

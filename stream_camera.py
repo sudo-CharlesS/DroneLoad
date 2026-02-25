@@ -27,7 +27,7 @@ try:
             break
 
         #frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)        #conversion niveaux de gris
-        #frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
+        frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
 
         # --- DÉBUT DU TRAITEMENT OPENCV ---
         # Exemple simple : Détection de visages ou dessin

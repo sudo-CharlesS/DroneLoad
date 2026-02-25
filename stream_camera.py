@@ -1,65 +1,56 @@
 import cv2
 import time
 import sys
-from flask import Flask, Response
+from gstream import VideoGStreamer
+from flaskstream import VideoFStreamer
 
-app = Flask(__name__)
+Width=1280
+Height=720
+FPS=30
+Stream = input("F for flask / G for gstream / N for none : ")
 
+if Stream=="F":
+    streamer = VideoFStreamer(width=Width, height=Height, fps=FPS, stream=Stream)
+else:
+    streamer = VideoGStreamer(width=Width, height=Height, fps=FPS, stream=Stream)
 
-PORT = 5000
-WIDTH, HEIGHT = 1280, 720    #Video resolution
-FPS = 30
+print("Traitement démarré... ctrl+C pour stopper")
 
+prev_time = time.time()
+frame_count = 0
+fps=0
 
-cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
-cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
-cap.set(cv2.CAP_PROP_FPS, FPS)
-cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+try:
+    while True:
+        ret, frame = streamer.read()
+        if not ret:
+            break
 
-STREAMING_ACTIVE = input("Activate streaming ? (y/n) : ") == "y" or "Y"
+        #frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)        #conversion niveaux de gris
 
-def generate_frames():
-    print(f"Streaming en {HEIGHT}p... \n\nctrl+C to stop")
-    prev_time = time.time()
-    frame_count = 0
-    fps=0
-    try:
-        while True:
-                success, frame = cap.read()
-                if not success:
-                        break
+        # --- DÉBUT DU TRAITEMENT OPENCV ---
+        # Exemple simple : Détection de visages ou dessin
+        cv2.putText(frame, f"Pi4 - Detection Active - FPS {fps}",
+                    (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
-                cv2.putText(frame, f"Pi4 - Detection Active - FPS {fps}",
-                            (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        # Insérez votre modèle de détection ici (YOLO, Haar, etc.)
+        # --- FIN DU TRAITEMENT OPENCV ---
 
-                if STREAMING_ACTIVE:
-                    ret, buffer = cv2.imencode('.jpg', frame)
-                    yield (b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
+        # Envoi vers le pipeline de streaming
+        if Stream!="N":
+            streamer.send(frame)
 
-                    frame_count += 1
-                    current_time = time.time()
-                    if current_time - prev_time >= 1.0:
-                        print(f"FPS Réels : {frame_count}")
-                        fps=frame_count
-                        frame_count = 0
-                        prev_time = current_time
+            frame_count += 1
+            current_time = time.time()
+            if current_time - prev_time >= 1.0:
+                print(f"FPS Réels : {frame_count}")
+                fps = frame_count
+                frame_count = 0
+                prev_time = current_time
 
-    except KeyboardInterrupt:
-        print("\nArrêt du programme...")
-        sys.exit(1)
+except KeyboardInterrupt:
+    print("\nArrêt du programme...")
+    sys.exit(1)
 
-    finally:
-        cap.release()
-
-@app.route('/')
-def index():
-        return '<img src="/video_feed" style="width:100%">'
-
-@app.route('/video_feed')
-def video_feed():
-        return Response(generate_frames(), mimetype='multipart/x-mixed-replace;boundary=frame')
-
-if __name__ == "__main__":
-        app.run(host='0.0.0.0', port=PORT)
+finally:
+    streamer.release()

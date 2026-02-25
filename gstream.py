@@ -33,8 +33,8 @@ class VideoGStreamer:
         gst_in = (
             f"v4l2src device=/dev/video0 ! "
             f"image/jpeg,width={self.width},height={self.height},framerate={self.fps}/1 ! "
-            f"jpegdec ! "        #v4l2jpegdec #à tester, version matérielle
-            f"v4l2convert ! video/x-raw,format=GRAY8 ! appsink drop=true"
+            f"v4l2jpegdec ! "        #v4l2jpegdec #à testerjpegdec, version matérielle
+            f"videoconvert ! video/x-raw,format=GRAY8 ! appsink drop=true"
         )
         self.out = None
         if self.streaming_active:

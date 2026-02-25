@@ -9,7 +9,7 @@ Height=720
 FPS=30
 Stream = input("F for flask / G for gstream / N for none : ")
 
-if Stream=="F":
+if Stream=="F" or "f":
     streamer = VideoFStreamer(width=Width, height=Height, fps=FPS, stream=Stream)
 else:
     streamer = VideoGStreamer(width=Width, height=Height, fps=FPS, stream=Stream)
@@ -37,7 +37,7 @@ try:
         # --- FIN DU TRAITEMENT OPENCV ---
 
         # Envoi vers le pipeline de streaming
-        if Stream!="N":
+        if Stream!="N" or "n":
             streamer.send(frame)
 
             frame_count += 1

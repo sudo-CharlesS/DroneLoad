@@ -1,55 +1,20 @@
 import cv2
 import time
 import sys
+from gstream import VideoGStreamer
+from flaskstream import VideoFStreamer
 
-PORT = 5000
-WIDTH, HEIGHT = 1920, 1080    #Video resolution
-FPS = 30
+Width=1280
+Height=720
+FPS=30
+Stream = input("F for flask / G for gstream / N for none : ")
 
-STREAMING_ACTIVE = True
-IP_DEST = input("Type IP (or 1 for default=192.169.2.9 or 0 to deactivate streaming ) : ")#"192.168.2.9"    #Destination PC IP
-if IP_DEST == "0":
-    IP_DEST = "0.0.0.0"
-    STREAMING_ACTIVE = False
-elif IP_DEST == "1":
-    IP_DEST = "192.168.2.9"
+if Stream=="F":
+    streamer = VideoFStreamer(width=Width, height=Height, fps=FPS, stream=Stream)
+else:
+    streamer = VideoGStreamer(width=Width, height=Height, fps=FPS, stream=Stream)
 
-# Si vous utilisez une caméra USB, remplacez libcamerasrc par v4l2src
-gst_in = (
-    "v4l2src device=/dev/video0 ! "
-    "image/jpeg,width=1920,height=1080,framerate=30/1 ! "
-    "jpegdec ! "
-    "v4l2convert ! video/x-raw,format=BGR ! appsink"
-)
-gst_out = (
-    f"appsrc ! "
-    f"video/x-raw,format=BGR,width={WIDTH},height={HEIGHT},framerate={FPS}/1 ! "
-    f"v4l2convert ! "   #videoconvert
-    f"video/x-raw,format=I420 ! "
-    f"v4l2h264enc extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=4000000,h264_i_frame_period=15\" ! "
-    f"video/x-h264,level=(string)4,profile=high,stream-format=byte-stream ! " # On force le caps-filter qui marche dans ton terminal
-    f"h264parse ! "                    # Indispensable pour stabiliser le flux matériel
-    f"rtph264pay config-interval=1 pt=96 aggregate-mode=none ! "
-    f"udpsink host={IP_DEST} port=5000 sync=false async=false"
-)
-
-cap = cv2.VideoCapture(gst_in, cv2.CAP_GSTREAMER)
-#cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
-#cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
-#cap.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
-#cap.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
-#cap.set(cv2.CAP_PROP_FPS, FPS)
-#cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
-
-out = None
-if STREAMING_ACTIVE:
-    out = cv2.VideoWriter(gst_out, cv2.CAP_GSTREAMER, 0, FPS, (WIDTH, HEIGHT), True)
-
-if not cap.isOpened() or (STREAMING_ACTIVE and not out.isOpened()):
-    print("Erreur : Impossible d'ouvrir les pipelines GStreamer")
-    exit()
-
-print(f"Streaming vers {IP_DEST}:{PORT} en {HEIGHT}p... \n\nctrl+C to stop")
+print("Traitement démarré... ctrl+C pour stopper")
 
 prev_time = time.time()
 frame_count = 0
@@ -57,21 +22,23 @@ fps=0
 
 try:
     while True:
-        ret, frame = cap.read()
+        ret, frame = streamer.read()
         if not ret:
             break
 
+        #frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)        #conversion niveaux de gris
+
         # --- DÉBUT DU TRAITEMENT OPENCV ---
         # Exemple simple : Détection de visages ou dessin
-        cv2.putText(frame, f"Pi4 - Detection Active - Frame {fps}",
+        cv2.putText(frame, f"Pi4 - Detection Active - FPS {fps}",
                     (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
         # Insérez votre modèle de détection ici (YOLO, Haar, etc.)
         # --- FIN DU TRAITEMENT OPENCV ---
 
         # Envoi vers le pipeline de streaming
-        if out is not None and out.isOpened():
-            out.write(frame)
+        if Stream!="N":
+            streamer.send(frame)
 
             frame_count += 1
             current_time = time.time()
@@ -86,7 +53,4 @@ except KeyboardInterrupt:
     sys.exit(1)
 
 finally:
-    cap.release()
-    if out is not None and out.isOpened():
-        out.release()
-    print("Pipelines fermées.")
+    streamer.release()

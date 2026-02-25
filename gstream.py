@@ -10,7 +10,7 @@ class VideoGStreamer:
 
         self.port = 5000
 
-        if self.stream == 'N' or 'n':
+        if self.stream == 'N' or self.stream=='n':
             self.ip_dest = "0.0.0.0"
             self.streaming_active = False
         else:

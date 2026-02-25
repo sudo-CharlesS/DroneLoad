@@ -9,7 +9,7 @@ Height=720
 FPS=30
 Stream = input("F for flask / G for gstream / N for none : ")
 
-if Stream=="F" or "f":
+if Stream=="F" or Stream=="f":
     streamer = VideoFStreamer(width=Width, height=Height, fps=FPS, stream=Stream)
 else:
     streamer = VideoGStreamer(width=Width, height=Height, fps=FPS, stream=Stream)

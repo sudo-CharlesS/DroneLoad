@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 
 PORT = 5000
-WIDTH, HEIGHT = 1920, 1080    #Video resolution
+WIDTH, HEIGHT = 1280, 720    #Video resolution
 FPS = 30
 
 

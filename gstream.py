@@ -15,39 +15,39 @@ class VideoGStreamer:
             self.streaming_active = False
         else:
             self.streaming_active = True
-            ip_dest = input("Type IP (or 1 for 192.168.2.9) : ")
-            if ip_dest == "1":
+            self.ip_dest = input("Type IP (or 1 for 192.168.2.9) : ")
+            if self.ip_dest == "1":
                 self.ip_dest = "192.168.2.9"
 
 
         #Camera raspberry :
-        """
+        f"""
         gst_in = (
             f"libcamerasrc ! "
-            f"video/x-raw,width={WIDTH},height={HEIGHT},framerate={FPS}/1 ! " #format=GRAY8 #niveaux de gris (ici si camera isc)
+            f"video/x-raw,width={self.width},height={self.height},framerate={self/fps}/1 ! " #format=GRAY8 #niveaux de gris (ici si camera isc)
             f"videoconvert ! " # ou v4l2convert
             f"video/x-raw,format=BGR ! "        #format=GRAY8 #niveaux de gris
             f"appsink drop=true"
         )
         """
         gst_in = (
-            "v4l2src device=/dev/video0 ! "
-            "image/jpeg,width=1920,height=1080,framerate=30/1 ! "
-            "jpegdec ! "        #v4l2jpegdec #à tester, version matérielle
-            "videoconvert ! video/x-raw,format=BGR ! appsink drop=true"
+            f"v4l2src device=/dev/video0 ! "
+            f"image/jpeg,width={self.width},height={self.height},framerate={self.fps}/1 ! "
+            f"jpegdec ! "        #v4l2jpegdec #à tester, version matérielle
+            f"videoconvert ! video/x-raw,format=BGR ! appsink drop=true"
         )
         self.out = None
         if self.streaming_active:
             gst_out = (
                 f"appsrc ! "
-                f"video/x-raw,format=BGR,width={WIDTH},height={HEIGHT},framerate={FPS}/1 ! "  # format=GRAY8 #niveaux de gris (réduire le bitrate)
+                f"video/x-raw,format=BGR,width={self.width},height={self.height},framerate={self.fps}/1 ! "  # format=GRAY8 #niveaux de gris (réduire le bitrate)
                 f"v4l2convert ! "  # videoconvert
                 f"video/x-raw,format=I420 ! "
                 f"v4l2h264enc extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=4000000,h264_i_frame_period=15\" ! "
                 f"video/x-h264,level=(string)4,profile=high,stream-format=byte-stream ! "  # On force le caps-filter qui marche dans ton terminal
                 f"h264parse ! "  # Indispensable pour stabiliser le flux matériel
                 f"rtph264pay config-interval=1 pt=96 aggregate-mode=none ! "
-                f"udpsink host={IP_DEST} port=5000 sync=false async=false"
+                f"udpsink host={self.ip_dest} port={self.port} sync=false async=false"
             )
             self.out = cv2.VideoWriter(gst_out, cv2.CAP_GSTREAMER, 0, self.fps, (self.width, self.height), True) #False : niveaux de gris
 

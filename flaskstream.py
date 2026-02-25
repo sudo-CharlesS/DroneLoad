@@ -1,6 +1,7 @@
 import cv2
 import sys
 import threading
+import time
 from flask import Flask, Response
 
 class VideoFStreamer:
@@ -66,11 +67,12 @@ class VideoFStreamer:
     def _generate(self):
         print(f"Streaming en {self.height}p... \n\nctrl+C to stop")
         while True:
+            time.sleep(0.03)
             with self.lock:
                 if self.last_frame is None:
                     continue
                 # Encodage en JPEG pour le navigateur
-                ret, buffer = cv2.imencode('.jpg', self.last_frame)
+                ret, buffer = cv2.imencode('.jpg', self.last_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 50])
             yield (b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
 
 
@@ -81,6 +83,8 @@ class VideoFStreamer:
     def send(self, frame):
         """Met à jour la frame qui sera diffusée par Flask"""
         with self.lock:
+            #small_frame = cv2.resize(frame, (640, 360))
+            #self.last_frame = small_frame
             self.last_frame = frame.copy()
 
     def release(self):

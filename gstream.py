@@ -24,7 +24,7 @@ class VideoGStreamer:
         f"""
         gst_in = (
             f"libcamerasrc ! "
-            f"video/x-raw,width={self.width},height={self.height},framerate={self/fps}/1 ! " #format=GRAY8 #niveaux de gris (ici si camera isc)
+            f"video/x-raw,width={self.width},height={self.height},framerate={self.fps}/1 ! " #format=GRAY8 #niveaux de gris (ici si camera isc)
             f"videoconvert ! " # ou v4l2convert
             f"video/x-raw,format=BGR ! "        #format=GRAY8 #niveaux de gris
             f"appsink drop=true"

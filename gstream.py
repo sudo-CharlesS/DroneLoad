@@ -41,7 +41,7 @@ class VideoGStreamer:
             gst_out = (
                 f"appsrc ! "
                 f"video/x-raw,format=BGR,width={self.width},height={self.height},framerate={self.fps}/1 ! "  # format=GRAY8 #niveaux de gris (réduire le bitrate)
-                f"v4l2convert ! "  # videoconvert
+                f"videoconvert ! "  # v4l2convert
                 f"video/x-raw,format=I420 ! "
                 f"v4l2h264enc extra-controls=\"controls,h264_profile=4,h264_level=13,video_bitrate=4000000,h264_i_frame_period=15\" ! "
                 f"video/x-h264,level=(string)4,profile=high,stream-format=byte-stream ! "  # On force le caps-filter qui marche dans ton terminal

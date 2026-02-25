@@ -34,7 +34,7 @@ class VideoGStreamer:
             f"v4l2src device=/dev/video0 ! "
             f"image/jpeg,width={self.width},height={self.height},framerate={self.fps}/1 ! "
             f"jpegdec ! "        #v4l2jpegdec #à tester, version matérielle
-            f"videoconvert ! video/x-raw,format=BGR ! appsink drop=true"
+            f"videoconvert ! video/x-raw,format=GRAY8 ! appsink drop=true"
         )
         self.out = None
         if self.streaming_active:
@@ -57,13 +57,15 @@ class VideoGStreamer:
             else:
                 print(f"Streaming vers {self.ip_dest}:{self.port} en {self.height}p... \n\nctrl+C to stop")
 
-        #cap = cv2.VideoCapture(gst_in, cv2.CAP_GSTREAMER)
+        cap = cv2.VideoCapture(gst_in, cv2.CAP_GSTREAMER)
+        """
         self.cap = cv2.VideoCapture(0, cv2.CAP_V4L2) #non usb : cap = cv2.VideoCapture(0)    (pas sur de fonctionnner)
         self.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))    #Supprimer en non usb
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
         self.cap.set(cv2.CAP_PROP_FPS, self.fps)
         self.cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+        """
 
         if not self.cap.isOpened():
             print("Erreur : Impossible d'accéder à la caméra / d'ouvrir le pipeline d'entrée")

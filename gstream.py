@@ -57,7 +57,7 @@ class VideoGStreamer:
             else:
                 print(f"Streaming vers {self.ip_dest}:{self.port} en {self.height}p... \n\nctrl+C to stop")
 
-        cap = cv2.VideoCapture(gst_in, cv2.CAP_GSTREAMER)
+        self.cap = cv2.VideoCapture(gst_in, cv2.CAP_GSTREAMER)
         """
         self.cap = cv2.VideoCapture(0, cv2.CAP_V4L2) #non usb : cap = cv2.VideoCapture(0)    (pas sur de fonctionnner)
         self.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))    #Supprimer en non usb
